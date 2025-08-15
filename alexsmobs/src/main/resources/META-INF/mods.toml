@@ -1,0 +1,36 @@
+modLoader="javafml"
+loaderVersion="[52,)"
+license="LGPL-3.0"
+issueTrackerURL="https://github.com/Alex-the-666/AlexsMobs/issues"
+
+[[mods]]
+modId="alexsmobs"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/alexs-mobs"
+authors="${mod_authors}"
+description='''${mod_description}'''
+
+[[dependencies.alexsmobs]]
+    modId="citadel"
+    mandatory=true
+    versionRange="[2.7.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.alexsmobs]]
+    modId="forge"
+    mandatory=true
+    versionRange="[52,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.alexsmobs]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[modproperties.alexsmobs]
+    catalogueItemIcon="alexsmobs:bear_dust"
