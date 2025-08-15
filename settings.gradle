@@ -1,0 +1,4 @@
+rootProject.name = 'alexsmobs-citadel-1.21'
+
+include 'citadel'
+include 'alexsmobs'

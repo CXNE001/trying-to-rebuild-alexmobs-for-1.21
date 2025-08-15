@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[52,)"
+license="LGPL-3.0"
+issueTrackerURL="https://github.com/Alex-the-666/Citadel/issues"
+
+[[mods]]
+modId="citadel"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/Alex-the-666/Citadel"
+logoFile="citadel.png"
+credits="Gegy1000"
+authors="${mod_authors}"
+description='''${mod_description}'''
+
+[[dependencies.citadel]]
+    modId="forge"
+    mandatory=true
+    versionRange="[52,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.citadel]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
