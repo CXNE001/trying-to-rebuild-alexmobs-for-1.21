@@ -116,16 +116,16 @@ public class Citadel {
     public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder.named((ResourceLocation)PACKET_NETWORK_NAME).clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals).networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
     public static ServerProxy PROXY = (ServerProxy)DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static List<String> PATREONS = new ArrayList<String>();
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create((IForgeRegistry)ForgeRegistries.ITEMS, (String)"citadel");
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create((IForgeRegistry)ForgeRegistries.BLOCKS, (String)"citadel");
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create((IForgeRegistry)ForgeRegistries.BLOCK_ENTITY_TYPES, (String)"citadel");
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "citadel");
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "citadel");
     public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new ItemCitadelDebug(new Item.Properties()));
-    public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().m_41487_(1)));
-    public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().m_41487_(1)));
-    public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().m_41487_(1)));
-    public static final RegistryObject<Item> ICON_ITEM = ITEMS.register("icon_item", () -> new ItemCustomRender(new Item.Properties().m_41487_(1)));
-    public static final RegistryObject<Block> LECTERN = BLOCKS.register("lectern", () -> new CitadelLecternBlock(BlockBehaviour.Properties.m_60926_((BlockBehaviour)Blocks.f_50624_)));
-    public static final RegistryObject<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = BLOCK_ENTITIES.register("lectern", () -> BlockEntityType.Builder.m_155273_(CitadelLecternBlockEntity::new, (Block[])new Block[]{(Block)LECTERN.get()}).m_58966_(null));
+    public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> EFFECT_ITEM = ITEMS.register("effect_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FANCY_ITEM = ITEMS.register("fancy_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> ICON_ITEM = ITEMS.register("icon_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Block> LECTERN = BLOCKS.register("lectern", () -> new CitadelLecternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LECTERN)));
+    public static final RegistryObject<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = BLOCK_ENTITIES.register("lectern", () -> BlockEntityType.Builder.of(CitadelLecternBlockEntity::new, (Block)LECTERN.get()).build(null));
 
     public Citadel() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -136,12 +136,12 @@ public class Citadel {
         ITEMS.register(bus);
         BLOCKS.register(bus);
         BLOCK_ENTITIES.register(bus);
-        DeferredRegister serializers = DeferredRegister.create((ResourceKey)ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, (String)"citadel");
+        DeferredRegister serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "citadel");
         serializers.register(bus);
         serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
-        DeferredRegister surfaceRules = DeferredRegister.create((ResourceKey)Registries.f_256815_, (String)"citadel");
+        DeferredRegister surfaceRules = DeferredRegister.create(Registries.MATERIAL_RULE, "citadel");
         surfaceRules.register(bus);
-        surfaceRules.register("citadel_wrapper", () -> CitadelSurfaceRuleWrapper.CODEC.f_216232_());
+        surfaceRules.register("citadel_wrapper", () -> CitadelSurfaceRuleWrapper.CODEC.codec());
         MinecraftForge.EVENT_BUS.register((Object)this);
         MinecraftForge.EVENT_BUS.register((Object)PROXY);
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
@@ -154,13 +154,13 @@ public class Citadel {
     }
 
     public static <MSG> void sendMSGToAll(MSG message) {
-        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().m_6846_().m_11314_()) {
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             Citadel.sendNonLocal(message, player);
         }
     }
 
     public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
-        NETWORK_WRAPPER.sendTo(msg, player.f_8906_.f_9742_, NetworkDirection.PLAY_TO_CLIENT);
+        NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private void setup(FMLCommonSetupEvent event) {
@@ -213,7 +213,7 @@ public class Citadel {
 
     @SubscribeEvent(priority=EventPriority.LOWEST)
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        RegistryAccess.Frozen registryAccess = event.getServer().m_206579_();
-        VillageHouseManager.addAllHouses((RegistryAccess)registryAccess);
+        RegistryAccess.Frozen registryAccess = event.getServer().registryAccess();
+        VillageHouseManager.addAllHouses(registryAccess);
     }
 }
